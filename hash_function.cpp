@@ -3,8 +3,8 @@
 string hash_function(string &key)
 {
     // Pagrindiniai konstantos algoritmui (pirmieji skaičiai)
-    const uint64_t PRIME1 = 0x9E3779B185EBCA87ULL;
-    const uint64_t PRIME2 = 0xC2B2AE3D27D4EB4FULL;
+    const uint64_t PRIME1 = 0x9E3779B185EBCA87ULL; // mums reikia unikalių ir didelių skaičių, naudojame hex
+    const uint64_t PRIME2 = 0xC2B2AE3D27D4EB4FULL; // ull - unsigned long long (nes gali būti labai dideli skaičiai)
     const uint64_t PRIME3 = 0x165667B19E3779F9ULL;
     const uint64_t PRIME4 = 0x85EBCA77C2B2AE63ULL;
     
