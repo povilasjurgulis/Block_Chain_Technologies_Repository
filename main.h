@@ -7,6 +7,8 @@
 #include <random> // rng
 #include <string> // string
 #include <cstdint> // uint64_t
+#include <fstream> // failų skaitymui
+#include <sstream> // string stream
 
 using std::unordered_map; using std::cout; using std::ifstream; using std::endl;
 using namespace std::chrono; using std::random_device; using std::mt19937; using std::cin;
