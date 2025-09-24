@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     cout << "\n";
     cout << "Original string: " << key << endl;
     cout << "Hash result: " << hash_result << endl;
-    cout << "Hash length: " << hash_result.length() << " simboliu (64 bitai)" << endl;
+    cout << "Hash length: " << hash_result.length() << " simboliu (256 bitai)" << endl;
     
     // Demonstracija avalanche effect
     cout << "\nDemonstrating avalanche effect:" << endl;
