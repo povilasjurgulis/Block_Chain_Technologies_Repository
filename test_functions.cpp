@@ -38,6 +38,33 @@ void efficiency_test() {
             cout << "Could not open file: " << filename << endl;
             cout << "Continuing with string length tests..." << endl;
         }
+    } else {
+        cout << "File test skipped." << endl;
+    }
+
+    // Test with different length strings
+    std::vector<int> test_lengths = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024};
+
+    cout << "\nTime measurement with different length strings:" << endl;
+    cout << "Length\t\tTime mikroseconds\tFiles/s" << endl;
+    cout << "------------------------------------------------" << endl;
+
+    for (int length : test_lengths) {
+        string test_string(length, 'a');
+
+        // Repeat 1000 times for more precise measurement
+        auto start = high_resolution_clock::now();
+        for (int i = 0; i < 1000; i++) {
+            string temp = test_string; // Create copy to avoid reference issues
+            hash_function(temp);
+        }
+        auto end = high_resolution_clock::now();
+
+        auto avg_time = duration_cast<microseconds>(end - start).count() / 1000.0;
+        double files_per_second = 1000000.0 / avg_time; // 1 second = 1,000,000 us
+
+        cout << length << "\t\t" << std::fixed << std::setprecision(1) 
+             << avg_time << "\t\t\t" << std::setprecision(0) << files_per_second << endl;
     } 
 }
 
