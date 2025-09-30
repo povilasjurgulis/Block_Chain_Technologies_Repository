@@ -70,7 +70,62 @@ void efficiency_test() {
 
 // Function for collision testing
 void collision_test() {
+    cout << "\n--- COLLISION SEARCH ---" << endl;
+    cout << "Generating 100,000 random strings of different lengths..." << endl;
     
+    int total_strings = 100000;
+    int collisions_found = 0;
+    std::set<string> unique_hashes; // Renkuosi seta unikaliems hashams, nes set automatiškai tvarko unikalumą
+    std::map<string, string> hash_to_original;
+    
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> char_dist(0, 61);
+    std::uniform_int_distribution<> length_dist(0, 3);
+    
+    string charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    int lengths[] = {10, 100, 500, 1000};
+    
+    auto start_time = high_resolution_clock::now();
+    
+    for (int i = 0; i < total_strings; i++) {
+        int length_idx = length_dist(gen); // Atsitiktinis ilgis nuo 0 iki 3
+        int str_length = lengths[length_idx]; // Pasirenkame ilgį iš predefined masyvo
+        
+        string random_str = "";
+        random_str.reserve(str_length);
+        
+        for (int j = 0; j < str_length; j++) {
+            random_str += charset[char_dist(gen)]; // Atsitiktinis simbolis is charset
+        }
+        
+        string hash_result = hash_function(random_str);
+        // Patikriname ar hash jau egzistuoja sete: unique_hashes.find(hash_result) yra lygus .end() jei nerasta tokio elemento sete 
+        if (unique_hashes.find(hash_result) != unique_hashes.end()) { // Jei hash jau egzistuoja sete, radome koliziją
+            collisions_found++;
+            cout << "\n!!! COLLISION FOUND !!!" << endl;
+            cout << "Hash: " << hash_result << endl;
+            cout << "String 1: " << hash_to_original[hash_result] << endl;
+            cout << "String 2: " << random_str << endl;
+        } else {
+            unique_hashes.insert(hash_result);
+            hash_to_original[hash_result] = random_str;
+        }
+        
+    }
+    
+    auto end_time = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(end_time - start_time);
+    
+    cout << "\n--- COLLISION RESULTS ---" << endl;
+    cout << "Total generated: " << total_strings << endl;
+    cout << "Unique hashes: " << unique_hashes.size() << endl;
+    cout << "Collisions found: " << collisions_found << endl;
+    cout << "Test duration: " << duration.count() << " ms" << endl;
+    
+    if (collisions_found == 0) {
+        cout << "EXCELLENT RESULT: No collisions found!" << endl;
+    }
 }
 
 // Function for avalanche effect testing
