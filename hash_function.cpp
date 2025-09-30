@@ -14,14 +14,14 @@ string hash_function(string &key)
     uint64_t hash3 = PRIME3;
     uint64_t hash4 = PRIME4;
     
-    // Pirmasis etapas: apdorojame kiekvieną baitą su visomis keturiomis hash reikšmėmis
+    // Pirmasis etapas: apdorojame kiekvieną baitą/simbolį su visomis keturiomis hash reikšmėmis
     for (size_t i = 0; i < key.length(); i++) {
-        uint64_t byte_val = static_cast<uint64_t>(key[i]);
+        uint64_t byte_val = static_cast<uint64_t>(key[i]); // paimame kiekvieną simbolį iš string ir paverčiame į skaičių
         
         // Avalanche effect: kiekvienas baitas paveiks visus bitus visose hash reikšmėse
-        hash1 ^= byte_val;
+        hash1 ^= byte_val; // XOR operacija - kiekvienas bitas pakeičiamas, jei baito atitinkamas bitas yra 1
         hash1 *= PRIME2;
-        hash1 ^= hash1 >> 33;
+        hash1 ^= hash1 >> 33; // maišymas dešinėn (>>) - hash1 bitus pastumiame 33 pozicijomis į dešinę 
         hash1 *= PRIME3;
         hash1 ^= hash1 >> 29;
         
