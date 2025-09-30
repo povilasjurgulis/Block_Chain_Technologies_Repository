@@ -130,5 +130,106 @@ void collision_test() {
 
 // Function for avalanche effect testing
 void avalanche_test() {
+    cout << "\n--- AVALANCHE EFFECT TEST ---" << endl;
+    cout << "Generating 100,000 pairs differing by one character..." << endl;
     
+    int total_pairs = 100000;
+    std::vector<double> bit_differences;
+    std::vector<double> hex_differences;
+    
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> char_dist(0, 61);
+    std::uniform_int_distribution<> length_dist(10, 50);
+    std::uniform_int_distribution<> pos_dist(0, 49);
+    
+    string charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    
+    auto start_time = high_resolution_clock::now();
+    
+    for (int i = 0; i < total_pairs; i++) {
+        // Generate original string
+        int str_length = length_dist(gen);
+        string original = "";
+        for (int j = 0; j < str_length; j++) {
+            original += charset[char_dist(gen)];
+        }
+        
+        // Create modified string (change one character)
+        string modified = original;
+        int change_pos = pos_dist(gen) % str_length;
+        char new_char;
+        do {
+            new_char = charset[char_dist(gen)];
+        } while (new_char == modified[change_pos]);
+        modified[change_pos] = new_char;
+        
+        // Calculate hashes
+        string hash1 = hash_function(original);
+        string hash2 = hash_function(modified);
+        
+        // Analyze bit differences
+        int bit_diff_count = 0;
+        for (size_t j = 0; j < hash1.length(); j++) {
+            int val1 = (hash1[j] >= '0' && hash1[j] <= '9') ? hash1[j] - '0' : hash1[j] - 'a' + 10;
+            int val2 = (hash2[j] >= '0' && hash2[j] <= '9') ? hash2[j] - '0' : hash2[j] - 'a' + 10;
+            int xor_result = val1 ^ val2;
+            
+            // Count different bits
+            for (int bit = 0; bit < 4; bit++) {
+                if (xor_result & (1 << bit)) {
+                    bit_diff_count++;
+                }
+            }
+        }
+        
+        // Count hex character differences
+        int hex_diff_count = 0;
+        for (size_t j = 0; j < hash1.length(); j++) {
+            if (hash1[j] != hash2[j]) {
+                hex_diff_count++;
+            }
+        }
+        
+        double bit_diff_percent = (double)bit_diff_count / (hash1.length() * 4) * 100;
+        double hex_diff_percent = (double)hex_diff_count / hash1.length() * 100;
+        
+        bit_differences.push_back(bit_diff_percent);
+        hex_differences.push_back(hex_diff_percent);
+        
+    }
+    
+    // Calculate statistics
+    double bit_min = *std::min_element(bit_differences.begin(), bit_differences.end());
+    double bit_max = *std::max_element(bit_differences.begin(), bit_differences.end());
+    double bit_avg = 0;
+    for (double diff : bit_differences) bit_avg += diff;
+    bit_avg /= bit_differences.size();
+    
+    double hex_min = *std::min_element(hex_differences.begin(), hex_differences.end());
+    double hex_max = *std::max_element(hex_differences.begin(), hex_differences.end());
+    double hex_avg = 0;
+    for (double diff : hex_differences) hex_avg += diff;
+    hex_avg /= hex_differences.size();
+    
+    auto end_time = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(end_time - start_time);
+    
+    cout << "\n--- AVALANCHE EFFECT RESULTS ---" << endl;
+    cout << "Bit level:" << endl;
+    cout << "  Minimum: " << std::fixed << std::setprecision(2) << bit_min << "%" << endl;
+    cout << "  Maximum: " << bit_max << "%" << endl;
+    cout << "  Average: " << bit_avg << "%" << endl;
+    
+    cout << "\nHex level:" << endl;
+    cout << "  Minimum: " << hex_min << "%" << endl;
+    cout << "  Maximum: " << hex_max << "%" << endl;
+    cout << "  Average: " << hex_avg << "%" << endl;
+    
+    cout << "\nTest duration: " << duration.count() << " ms" << endl;
+    
+    if (bit_avg >= 45.0 && bit_avg <= 55.0) {
+        cout << "EXCELLENT avalanche effect! (~50% bits change)" << endl;
+    }
+
 }

@@ -90,6 +90,11 @@ int main(int argc, char* argv[])
     // Test 4: Efficiency measurement
     // efficiency_test();
     
+    // Test 5: Collision search
+    // collision_test();
+    
+    // Test 6: Avalanche effect analysis
+    // avalanche_test();
     
     return 0;
 }
