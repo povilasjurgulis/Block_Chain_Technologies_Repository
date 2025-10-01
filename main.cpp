@@ -97,5 +97,8 @@ int main(int argc, char* argv[])
     // Test 6: Avalanche effect analysis
     // avalanche_test();
     
+    // Test 7: Comparison with standard hash functions
+    // comparison_test(filename);
+
     return 0;
 }

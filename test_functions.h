@@ -7,5 +7,6 @@
 void efficiency_test(const string& filename);
 void collision_test();
 void avalanche_test();
+void comparison_test(const string& filename = "");
 
 #endif
