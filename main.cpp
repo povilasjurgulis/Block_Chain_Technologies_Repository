@@ -12,12 +12,13 @@ int main(int argc, char* argv[])
     unordered_map<string, string> hash_table;
     
     bool is_file_input = false;
+    string filename = ""; // Pridedu kintamaji failo pavadinimui
     
     // Tikriname, ar yra command line argumentas
     if (argc > 1) {
         is_file_input = true;
         // Naudojame command line argumenta kaip failo pavadinima
-        string filename = argv[1];
+        filename = argv[1]; // Issaugome failo pavadinima
         ifstream file(filename);
         
         if (!file.is_open()) {
@@ -87,8 +88,8 @@ int main(int argc, char* argv[])
     // TESTS
     // Uncomment the tests you want to run:
     
-    // Test 4: Efficiency measurement
-    // efficiency_test();
+    // Test 4: Efficiency measurement - now passes filename from command line
+    // efficiency_test(filename);
     
     // Test 5: Collision search
     // collision_test();

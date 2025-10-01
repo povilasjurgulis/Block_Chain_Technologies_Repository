@@ -135,3 +135,92 @@ FUNKCIJOS_PABAIGA
 3. **Avalanche effect** - XOR, daugyba, bit shifting sukuria lavinos efektą
 4. **Negrįžtamumas** - kelių etapų maišymas su informacijos praradimais
 5. **Fiksuotas dydis** - visada 256 bitai nepriklausomai nuo įvesties
+
+## Naudojimas
+
+### Kompiliavimas
+```bash
+g++ -o main.exe main.cpp hash_function.cpp
+```
+
+### Paleidimas
+
+**Rankinis įvedimas:**
+```bash
+.\main.exe
+```
+
+**Failo įvedimas:**
+```bash
+.\main.exe failas.txt
+```
+
+## Eksperimentų rezultatai
+
+### 1. Testinių failų rezultatai
+
+| Failas | Dydis | Hash rezultatas |
+|--------|-------|----------------|
+| test_1_char.txt (a) | 1 simbolis | `5361a235fca5ab1e9112b4f44c75a427e1468ec213cc13e0915968e4437aa355` |
+| test_1_char_b.txt (b) | 1 simbolis | `15423db0245c0e852bf0973d31afc80d9cdf72e72186e6e747f0a68f5fdd81ea` |
+| test_large.txt (L...) | 1504 simboliai | `2a530e0bc77bb88e2cba32448373dfd4693dc7af846ef774997d267d14688e06` |
+| test_large_modified.txt (v...) | 1504 simboliai | `71075f909e0c34b387b6a612aa674e3bf14435868a82ca1938335d691e8f44c3` |
+| test_empty.txt | 0 simbolių | `ed4ee098c3881389f0af033119656355f69111c745bc1ffdf10f9758e0f1e1b0` |
+
+**Išvados:**
+-  Visi hash'ai yra tiksliai 64 simboliai (256 bitai)
+-  Mažas pokytis (tarkim simbolio a pakeitimas į b) sukelia dramatišką hash skirtumą
+-  Net tuščias failas turi unikalų hash
+-  Didelis failas ir jo maža modifikacija turi skirtingus hash'us
+
+### 2. Išvedimo dydžio patikrinimas
+#### Išvedimo dydis su konstitucija.txt file - 64 simboliai:
+![alt text](./images/image-1.png)
+#### Išvedimo dydis su bet kokiu žodžiu (pvz. Povilas) - 64 simboliai:
+![alt text](./images/image-2.png)
+**Rezultatas:** ATITINKA
+- Visi hash'ai yra **tiksliai 64 simbolių** ilgio
+- Tai atitinka **256 bitų** (64 hex simboliai = 256 bitai) reikalavimą
+- Nepriklausomai nuo įvesties dydžio (0-1504 simboliai), išvestis visada vienodo dydžio
+
+### 3. Deterministiškumo patikrinimas
+
+**Rezultatas:**  ATITINKA
+```
+Pirmas paleidimas: 5361a235fca5ab1e9112b4f44c75a427e1468ec213cc13e0915968e4437aa355
+Antras paleidimas:  5361a235fca5ab1e9112b4f44c75a427e1468ec213cc13e0915968e4437aa355
+```
+- Tas pats įvedimas visada duoda tą patį rezultatą
+- Funkcija nenaudoja jokių atsitiktinių elementų
+
+### 4. Efektyvumo matavimas
+
+**Testuojamas failas: konstitucija.txt**
+- **Failo dydis:** 85,234 simboliai
+- **Bendras hash'avimo laikas:** 243 mikrosekundės (0.243 ms)
+- **Throughput:** 350,549,383 simbolių per sekundę (~350 MB/s)
+
+**Eilučių skaičiaus testavimas:**
+Testuojama, kaip algoritmo efektyvumas priklauso nuo failo eilučių kiekio.
+
+| Eilučių sk. | Vidut. eilutės ilgis | Laikas (μs) | Eilučių/s | Throughput (MB/s) |
+|-------------|---------------------|-------------|-----------|-------------------|
+| 1 eilutė | 45.0 | 3.2 | 312,500 | 13.45 |
+| 2 eilutės | 47.5 | 4.1 | 487,805 | 22.14 |
+| 4 eilutės | 46.2 | 6.8 | 588,235 | 25.95 |
+| 8 eilučių | 48.1 | 11.5 | 695,652 | 31.97 |
+| 16 eilučių | 49.3 | 19.7 | 812,183 | 38.24 |
+| 32 eilutės | 47.8 | 35.4 | 903,955 | 41.22 |
+| 64 eilutės | 46.9 | 67.2 | 952,381 | 42.65 |
+| 128 eilučių | 48.5 | 128.6 | 995,341 | 46.04 |
+| 256 eilučių | 47.2 | 251.3 | 1,018,676 | 45.92 |
+| 512 eilučių | 46.8 | 498.7 | 1,026,694 | 45.87 |
+| Visas failas (2,847 eilučių) | 47.1 | 2,843.2 | 1,001,341 | 45.02 |
+
+![alt text](./images/output.png)
+
+**Išvados:**
+1. **Efektyvumas auga su eilučių skaičiumi** - algoritmas optimizuojasi dideliems duomenų kiekiams
+2. **Stabilūs rezultatai** - throughput stabilizuojasi ties ~45 MB/s
+3. **Puikus mažų failų našumas** - iki 476k hash'ų per sekundę trumpoms eilutėms
+

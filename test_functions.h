@@ -4,7 +4,7 @@
 #include "main.h"
 
 // Test function declarations
-void efficiency_test();
+void efficiency_test(const string& filename);
 void collision_test();
 void avalanche_test();
 

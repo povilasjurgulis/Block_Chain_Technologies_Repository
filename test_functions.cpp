@@ -1,25 +1,20 @@
 #include "test_functions.h"
 
 // Function for efficiency testing
-void efficiency_test() {
+void efficiency_test(const string& filename) {
     cout << "\n--- EFFICIENCY TEST ---" << endl;
-    
-    // Ask for filename
-    string filename;
-    cout << "Enter filename for efficiency test (or press Enter to skip file test): ";
-    getline(cin, filename);
     
     if (!filename.empty()) {
         ifstream file(filename);
         if (file.is_open()) {
-            std::stringstream buffer; // Sukuriame stream objekta
-            buffer << file.rdbuf(); // Nuskaitome visa faila i buferi
-            string content = buffer.str(); // Konvertuojame i string (iš stream)
+            std::stringstream buffer;
+            buffer << file.rdbuf();
+            string content = buffer.str();
             file.close();
             
             cout << "Testing with " << filename << " file (" << content.length() << " characters)" << endl;
             
-            // Measure time
+            // Measure time for whole file
             auto start = high_resolution_clock::now();
             string hash_result = hash_function(content);
             auto end = high_resolution_clock::now();
@@ -34,38 +29,81 @@ void efficiency_test() {
             // Calculate throughput
             double chars_per_second = (double)content.length() / ((double)duration_us.count() / 1000000.0);
             cout << "Throughput: " << std::fixed << std::setprecision(0) << chars_per_second << " characters/second" << endl;
+            
+            // Now test line by line performance
+            cout << "\n--- LINE BY LINE PERFORMANCE TEST ---" << endl;
+            
+            // Split content into lines
+            std::vector<string> lines;
+            std::stringstream ss(content);
+            string line;
+            while (getline(ss, line)) {
+                if (!line.empty()) {  // Skip empty lines
+                    lines.push_back(line);
+                }
+            }
+            
+            cout << "Total lines in file: " << lines.size() << endl;
+            
+            // Test different line counts: 1, 2, 4, 8, 16, 32, 64, 128, all_lines
+            std::vector<int> line_counts;
+            line_counts.push_back(1);
+            line_counts.push_back(2);
+            line_counts.push_back(4);
+            line_counts.push_back(8);
+            line_counts.push_back(16);
+            line_counts.push_back(32);
+            line_counts.push_back(64);
+            line_counts.push_back(128);
+            line_counts.push_back(256);
+            line_counts.push_back(512);
+            if (lines.size() > 512) {
+                line_counts.push_back((int)lines.size());
+            }
+            
+            cout << "\nTime measurement with different line counts:" << endl;
+            cout << "Lines\t\tAvg Line Length\tTime (us)\tLines/s\t\tThroughput (MB/s)" << endl;
+            cout << "-------------------------------------------------------------------------" << endl;
+            
+            for (int line_count : line_counts) {
+                if (line_count > (int)lines.size()) continue;
+                
+                // Create test content from first N lines
+                string test_content = "";
+                int total_chars = 0;
+                for (int i = 0; i < line_count; i++) {
+                    test_content += lines[i] + "\n";
+                    total_chars += lines[i].length() + 1; // +1 for \n
+                }
+                
+                double avg_line_length = (double)total_chars / line_count;
+                
+                // Repeat test multiple times for accuracy
+                int repeat_count = (line_count < 100) ? 1000 : 100;
+                
+                auto start_test = high_resolution_clock::now();
+                for (int i = 0; i < repeat_count; i++) {
+                    string temp = test_content;
+                    hash_function(temp);
+                }
+                auto end_test = high_resolution_clock::now();
+                
+                auto avg_time = duration_cast<microseconds>(end_test - start_test).count() / (double)repeat_count;
+                double lines_per_second = 1000000.0 / (avg_time / line_count);
+                double mb_per_second = (total_chars * 1000000.0) / (avg_time * 1024 * 1024);
+                
+                cout << line_count << "\t\t" << std::fixed << std::setprecision(1) << avg_line_length 
+                     << "\t\t" << std::setprecision(1) << avg_time 
+                     << "\t\t" << std::setprecision(0) << lines_per_second
+                     << "\t\t" << std::setprecision(2) << mb_per_second << endl;
+            }
+            
         } else {
             cout << "Could not open file: " << filename << endl;
-            cout << "Continuing with string length tests..." << endl;
         }
     } else {
-        cout << "File test skipped." << endl;
+        cout << "No filename provided for file test." << endl;
     }
-
-    // Test with different length strings
-    std::vector<int> test_lengths = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024};
-
-    cout << "\nTime measurement with different length strings:" << endl;
-    cout << "Length\t\tTime mikroseconds\tFiles/s" << endl;
-    cout << "------------------------------------------------" << endl;
-
-    for (int length : test_lengths) {
-        string test_string(length, 'a');
-
-        // Repeat 1000 times for more precise measurement
-        auto start = high_resolution_clock::now();
-        for (int i = 0; i < 1000; i++) {
-            string temp = test_string; // Create copy to avoid reference issues
-            hash_function(temp);
-        }
-        auto end = high_resolution_clock::now();
-
-        auto avg_time = duration_cast<microseconds>(end - start).count() / 1000.0;
-        double files_per_second = 1000000.0 / avg_time; // 1 second = 1,000,000 us
-
-        cout << length << "\t\t" << std::fixed << std::setprecision(1) 
-             << avg_time << "\t\t\t" << std::setprecision(0) << files_per_second << endl;
-    } 
 }
 
 // Function for collision testing

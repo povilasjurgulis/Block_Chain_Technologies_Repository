@@ -1,0 +1,1 @@
+Tai yra testinis failas, kurio turinį hashuosime
