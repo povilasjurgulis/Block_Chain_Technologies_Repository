@@ -140,7 +140,7 @@ FUNKCIJOS_PABAIGA
 
 ### Kompiliavimas
 ```bash
-g++ -o main.exe main.cpp hash_function.cpp
+g++ -o main.exe *.cpp
 ```
 
 ### Paleidimas
@@ -186,10 +186,13 @@ g++ -o main.exe main.cpp hash_function.cpp
 ### 3. Deterministiškumo patikrinimas
 
 **Rezultatas:**  ATITINKA
-```
-Pirmas paleidimas: 5361a235fca5ab1e9112b4f44c75a427e1468ec213cc13e0915968e4437aa355
-Antras paleidimas:  5361a235fca5ab1e9112b4f44c75a427e1468ec213cc13e0915968e4437aa355
-```
+
+#### Naudoju žodį test, kad patikrinčiau deterministiškumą:
+- Pirmas paleidimas: bcc2eb46055bb486a117b289e151f7089f8b3f59a29d267746072d8c86fec8af
+![alt text](./images/image-3.png)
+- Antras paleidimas: bcc2eb46055bb486a117b289e151f7089f8b3f59a29d267746072d8c86fec8af
+![alt text](./images/image-4.png)
+
 - Tas pats įvedimas visada duoda tą patį rezultatą
 - Funkcija nenaudoja jokių atsitiktinių elementų
 
