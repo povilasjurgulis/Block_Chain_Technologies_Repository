@@ -3,8 +3,8 @@
 #include <fstream>
 #include <sstream>
 
-/* Povilo Jurgulio 1 gr. 1 pogr. VU ISI 1 laboratorinis Block Chain darbas */
-/* Darbas darytas grupeje su Eligijumi Alenčiku ir as dariau labiau su AI/Copilot, o Elgijus labiau pats*/
+/* Povilo Jurgulio 1 gr. 1 pogr. VU ISI 1 laboratorinis Blokų Grandinių Technologijų nr. 1 darbas */
+/* Darbas darytas grupeje su Eligijumi Alenčiku ir aš dariau labiau su AI/Copilot, o Elgijus labiau pats*/
 
 int main(int argc, char* argv[])
 {
